@@ -10,7 +10,7 @@ spring:
       max-request-size: 11GB
 
 server:
-  port: 9091
+  port: 8000
 
 mybatis:
   configuration:
@@ -28,3 +28,7 @@ aliyun:
 logging:
   level:
     org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+# 文件上传配置
+file:
+  upload-dir: ./uploads

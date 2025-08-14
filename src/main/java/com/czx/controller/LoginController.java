@@ -1,9 +1,9 @@
 package com.czx.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import com.czx.pojo.Emp;
+import com.czx.pojo.User;
 import com.czx.pojo.Result;
-import com.czx.service.EmpService;
+import com.czx.service.UserService;
 import com.czx.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,21 +16,21 @@ import java.util.HashMap;
 @RestController
 public class LoginController {
     @Autowired
-    private EmpService empService;
+    private UserService userService;
 
     @PostMapping("/login")
-    public Result login(@RequestBody Emp emp){
-        log.info("员工登录: {}", emp);
-        Emp e = empService.login(emp);
+    public Result login(@RequestBody User user){
+        log.info("用户登录: {}", user);
+        User u = userService.login(user);
 
         //登录成功,生成令牌,下发令牌
-        if (e != null) {
+        if (u != null) {
             HashMap<String, Object> claims = new HashMap<>();
-            claims.put("id", e.getId());
-            claims.put("username",e.getUsername());
-            claims.put("password",e.getPassword());
+            claims.put("userId", u.getId());
+            claims.put("username", u.getUsername());
+            claims.put("email", u.getEmail());
 
-            String jwt = JwtUtils.generateJwt(claims); //jwt包含了当前登
+            String jwt = JwtUtils.generateJwt(claims); //jwt包含了当前登录用户的信息
             return Result.success(jwt);
         }
         //登录失败, 返回错误信息

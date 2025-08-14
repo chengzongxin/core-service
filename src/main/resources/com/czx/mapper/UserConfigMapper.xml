@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czx.mapper.UserConfigMapper">
+    
+    <resultMap id="UserConfigResultMap" type="com.czx.pojo.UserConfig">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="kuajingmaihuo_cookie" property="kuajingmaihuoCookie"/>
+        <result column="agentseller_cookie" property="agentsellerCookie"/>
+        <result column="mallid" property="mallid"/>
+        <result column="parent_msg_id" property="parentMsgId"/>
+        <result column="parent_msg_timestamp" property="parentMsgTimestamp"/>
+        <result column="tool_id" property="toolId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    
+    <select id="findByUserId" resultMap="UserConfigResultMap">
+        SELECT * FROM user_configs WHERE user_id = #{userId}
+    </select>
+    
+    <insert id="insert" parameterType="com.czx.pojo.UserConfig" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_configs (user_id, kuajingmaihuo_cookie, agentseller_cookie, mallid, 
+                                 parent_msg_id, parent_msg_timestamp, tool_id, created_at, updated_at)
+        VALUES (#{userId}, #{kuajingmaihuoCookie}, #{agentsellerCookie}, #{mallid}, 
+                #{parentMsgId}, #{parentMsgTimestamp}, #{toolId}, NOW(), NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.czx.pojo.UserConfig">
+        UPDATE user_configs 
+        SET kuajingmaihuo_cookie = #{kuajingmaihuoCookie},
+            agentseller_cookie = #{agentsellerCookie},
+            mallid = #{mallid},
+            parent_msg_id = #{parentMsgId},
+            parent_msg_timestamp = #{parentMsgTimestamp},
+            tool_id = #{toolId},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update>
+    
+    <delete id="deleteByUserId">
+        DELETE FROM user_configs WHERE user_id = #{userId}
+    </delete>
+    
+</mapper>

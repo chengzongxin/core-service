@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import com.czx.pojo.Result;
 import com.czx.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 @Component
 public class LoginCheckInterceptor implements HandlerInterceptor {
+    
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         //1.获取请求url。
@@ -26,7 +28,9 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (url.contains("test")||url.contains("upload")||url.contains("download")||url.contains("wgt")||url.contains("png")||url.contains("index")) {
+        // 不需要认证的路径
+        if (url.contains("test")||url.contains("upload")||url.contains("download")||url.contains("wgt")||url.contains("png")||url.contains("index")||url.contains("health")) {
+            log.info("无需认证的路径, 放行...");
             return true;
         }
 
@@ -45,7 +49,36 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         //5.解析token，如果解析失败，返回错误结果（未登录）。
         try {
-            JwtUtils.parseJWT(jwt);
+            // 解析JWT获取用户信息
+            Claims claims = JwtUtils.parseJWT(jwt);
+            
+            // 将用户信息存储到request中，供后续使用
+            if (claims != null) {
+                // 从Claims中提取用户ID和用户名
+                // 这里需要根据你的JWT结构来调整字段名
+                Object userIdObj = claims.get("userId");
+                Object usernameObj = claims.get("username");
+                
+                if (userIdObj != null) {
+                    if (userIdObj instanceof Integer) {
+                        req.setAttribute("userId", userIdObj);
+                    } else if (userIdObj instanceof String) {
+                        try {
+                            req.setAttribute("userId", Integer.parseInt((String) userIdObj));
+                        } catch (NumberFormatException e) {
+                            log.warn("用户ID格式错误: {}", userIdObj);
+                        }
+                    }
+                }
+                
+                if (usernameObj != null) {
+                    req.setAttribute("username", usernameObj.toString());
+                }
+                
+                log.info("用户信息注入成功: userId={}, username={}", 
+                    req.getAttribute("userId"), req.getAttribute("username"));
+            }
+            
         } catch (Exception e) {//jwt解析失败
             e.printStackTrace();
             log.info("解析令牌失败, 返回未登录错误信息");

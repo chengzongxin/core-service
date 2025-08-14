@@ -37,4 +37,69 @@ public class JwtUtils {
                 .getBody();
         return claims;
     }
+    
+    /**
+     * 从token中获取用户ID
+     * @param token JWT token
+     * @return 用户ID，如果获取失败返回null
+     */
+    public static Integer getUserIdFromToken(String token) {
+        try {
+            Claims claims = parseJWT(token);
+            if (claims != null) {
+                Object userIdObj = claims.get("userId");
+                if (userIdObj != null) {
+                    if (userIdObj instanceof Integer) {
+                        return (Integer) userIdObj;
+                    } else if (userIdObj instanceof String) {
+                        return Integer.parseInt((String) userIdObj);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // 解析失败，返回null
+        }
+        return null;
+    }
+    
+    /**
+     * 从token中获取用户名
+     * @param token JWT token
+     * @return 用户名，如果获取失败返回null
+     */
+    public static String getUsernameFromToken(String token) {
+        try {
+            Claims claims = parseJWT(token);
+            if (claims != null) {
+                Object usernameObj = claims.get("username");
+                if (usernameObj != null) {
+                    return usernameObj.toString();
+                }
+            }
+        } catch (Exception e) {
+            // 解析失败，返回null
+        }
+        return null;
+    }
+    
+    /**
+     * 验证token是否有效
+     * @param token JWT token
+     * @return true表示有效，false表示无效
+     */
+    public static boolean validateToken(String token) {
+        try {
+            Claims claims = parseJWT(token);
+            if (claims != null) {
+                // 检查是否过期
+                Date expiration = claims.getExpiration();
+                if (expiration != null && expiration.after(new Date())) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            // 解析失败，返回false
+        }
+        return false;
+    }
 }
