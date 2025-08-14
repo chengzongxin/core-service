@@ -49,8 +49,7 @@ public class UserConfigServiceImpl implements UserConfigService {
                 return true;
             }
         } catch (Exception e) {
-//            return Result.error("保存配置失败: " + e.getMessage());
-            log.error(e.getMessage());
+            log.error("保存配置失败: " + e.getMessage());
             return false;
         }
     }

@@ -70,8 +70,7 @@ public class FileServiceImpl implements FileService {
             return fileRecord;
             
         } catch (IOException e) {
-//            return "文件上传失败: " + e.getMessage();
-
+            log.error("文件上传失败: " + e.getMessage());
             return null;
         }
 

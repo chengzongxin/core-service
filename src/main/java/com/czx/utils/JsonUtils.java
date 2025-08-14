@@ -46,11 +46,74 @@ public class JsonUtils {
     
     /**
      * 从JsonNode中安全获取整数值
+     * 优先尝试获取int，如果超出范围则返回null
      */
     public static Integer getInteger(JsonNode node, String fieldName) {
         if (node != null && node.has(fieldName)) {
             JsonNode fieldNode = node.get(fieldName);
-            return fieldNode.isNumber() ? fieldNode.asInt() : null;
+            if (fieldNode.isNumber()) {
+                try {
+                    // 先尝试获取long值，检查是否超出int范围
+                    long longValue = fieldNode.asLong();
+                    if (longValue >= Integer.MIN_VALUE && longValue <= Integer.MAX_VALUE) {
+                        return (int) longValue;
+                    } else {
+                        // 超出int范围，返回null
+                        return null;
+                    }
+                } catch (Exception e) {
+                    // 转换失败，返回null
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 从JsonNode中安全获取长整数值
+     * 用于处理超出int范围的大数值
+     */
+    public static Long getLong(JsonNode node, String fieldName) {
+        if (node != null && node.has(fieldName)) {
+            JsonNode fieldNode = node.get(fieldName);
+            if (fieldNode.isNumber()) {
+                try {
+                    return fieldNode.asLong();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 从JsonNode中安全获取数值（自动选择合适类型）
+     * 优先返回Integer，如果超出范围则返回Long
+     */
+    public static Number getNumber(JsonNode node, String fieldName) {
+        if (node != null && node.has(fieldName)) {
+            JsonNode fieldNode = node.get(fieldName);
+            if (fieldNode.isNumber()) {
+                try {
+                    // 先尝试获取long值，检查是否超出int范围
+                    long longValue = fieldNode.asLong();
+                    if (longValue >= Integer.MIN_VALUE && longValue <= Integer.MAX_VALUE) {
+                        return (int) longValue;
+                    } else {
+                        // 超出int范围，返回Long
+                        return longValue;
+                    }
+                } catch (Exception e) {
+                    // 转换失败，尝试其他方式
+                    try {
+                        return fieldNode.asDouble();
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                }
+            }
         }
         return null;
     }
@@ -72,6 +135,36 @@ public class JsonUtils {
     public static JsonNode getNode(JsonNode node, String fieldName) {
         if (node != null && node.has(fieldName)) {
             return node.get(fieldName);
+        }
+        return null;
+    }
+    
+    /**
+     * 从JsonNode中安全获取数值，支持自动类型转换
+     * 如果字段值超出int范围，会自动转换为Long
+     */
+    public static Object getNumericValue(JsonNode node, String fieldName) {
+        if (node != null && node.has(fieldName)) {
+            JsonNode fieldNode = node.get(fieldName);
+            if (fieldNode.isNumber()) {
+                try {
+                    // 先尝试获取long值，检查是否超出int范围
+                    long longValue = fieldNode.asLong();
+                    if (longValue >= Integer.MIN_VALUE && longValue <= Integer.MAX_VALUE) {
+                        return (int) longValue;
+                    } else {
+                        // 超出int范围，返回Long
+                        return longValue;
+                    }
+                } catch (Exception e) {
+                    // 转换失败，尝试其他方式
+                    try {
+                        return fieldNode.asDouble();
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                }
+            }
         }
         return null;
     }

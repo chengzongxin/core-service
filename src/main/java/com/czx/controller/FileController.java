@@ -42,18 +42,18 @@ public class FileController {
     }
     
     @GetMapping("/list")
-    public List<FileRecord>  listFiles(HttpServletRequest request) {
+    public Result listFiles(HttpServletRequest request) {
         try {
             // 检查用户是否已认证
             if (!RequestUtils.isAuthenticated(request)) {
-                return null;
+                return Result.error("用户未认证");
             }
 
-            return fileService.getAllFiles();
+            List<FileRecord> files = fileService.getAllFiles();
+            return Result.success(files);
         } catch (Exception e) {
-//            return Result.error("获取文件列表失败: " + e.getMessage());
-            log.error(e.getMessage());
-            return null;
+            log.error("获取文件列表失败: " + e.getMessage());
+            return Result.error("获取文件列表失败: " + e.getMessage());
         }
     }
     
