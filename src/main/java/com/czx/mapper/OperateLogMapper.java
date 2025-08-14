@@ -17,6 +17,6 @@ public interface OperateLogMapper {
 
 //    @Select("select * from operate_log")
 //    @Select("select * from operate_log left join emp e on e.id = operate_log.operate_user")
-    @Select("select operate_user, operate_time, class_name, method_name, method_params, return_value, cost_time, username, name as operate_user_name from operate_log left join emp e on e.id = operate_log.operate_user  order by operate_time desc")
+    @Select("select operate_user, operate_time, class_name, method_name, method_params, return_value, cost_time, username, operate_username from operate_log left join users u on u.id = operate_log.operate_user  order by operate_time desc")
     List<OperateLog> getLog();
 }
