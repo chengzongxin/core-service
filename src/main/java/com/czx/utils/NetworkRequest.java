@@ -35,7 +35,7 @@ public class NetworkRequest {
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "*/*");
         // 移除accept-encoding，让服务器返回未压缩的响应
-        // headers.set("accept-encoding", "gzip, deflate, br, zstd");
+        headers.set("accept-encoding", "gzip, deflate, br, zstd");
         headers.set("accept-language", "zh-CN,zh;q=0.9,en;q=0.8");
         headers.set("anti-content", "");
         headers.set("cache-control", "max-age=0");

@@ -18,15 +18,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class TemuServiceImpl implements TemuService {
+    
+    private static final Logger log = LoggerFactory.getLogger(TemuServiceImpl.class);
     
     @Autowired
     private UserConfigService userConfigService;
     
     @Autowired
     private NetworkRequest networkRequest;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
     
     @Override
     public Map<String, Object> getComplianceList(Integer userId, int page, int pageSize) {
@@ -519,9 +527,18 @@ public class TemuServiceImpl implements TemuService {
             
             String offline_url = "https://seller.kuajingmaihuo.com/bg/cute/api/merchantService/chat/sendMessage";
             Map<String, Object> offline_payload = new HashMap<>();
-            offline_payload.put("parentMsgId", parent_msg_id);
+            // 确保parentMsgId是字符串类型，与Python版本保持一致
+            offline_payload.put("parentMsgId", String.valueOf(parent_msg_id));
             offline_payload.put("contentType", 7);
-            offline_payload.put("content", offline_content);
+            // 将content转换为JSON字符串，与Python版本保持一致
+            try {
+                String contentJson = objectMapper.writeValueAsString(offline_content);
+                offline_payload.put("content", contentJson);
+            } catch (Exception e) {
+                log.error("序列化content失败: {}", e.getMessage());
+                result.put("message", "序列化商品信息失败");
+                return result;
+            }
             
             Optional<JsonNode> offline_response = networkRequest.post(offline_url, offline_payload, cookie, mallid, origin_url);
             if (offline_response.isEmpty() || !JsonUtils.getBoolean(offline_response.get(), "success")) {
@@ -547,7 +564,8 @@ public class TemuServiceImpl implements TemuService {
                 
                 // 查询下架结果
                 Map<String, Object> result_query_payload = new HashMap<>();
-                result_query_payload.put("msgId", offline_msg_id);
+                // 确保msgId是字符串类型，与Python版本保持一致
+                result_query_payload.put("msgId", String.valueOf(offline_msg_id));
                 result_query_payload.put("direction", 2);
                 result_query_payload.put("limit", 20);
                 
