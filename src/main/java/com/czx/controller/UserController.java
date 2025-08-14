@@ -23,11 +23,11 @@ public class UserController {
             }
             
             // 设置默认值
-            if (user.getIsActive() == null) {
-                user.setIsActive(1); // 默认激活
+            if (user.getIs_active() == null) {
+                user.setIs_active(1); // 默认激活
             }
-            if (user.getIsAdmin() == null) {
-                user.setIsAdmin(0); // 默认非管理员
+            if (user.getIs_admin() == null) {
+                user.setIs_admin(0); // 默认非管理员
             }
             
             // TODO: 这里应该对密码进行加密处理
@@ -49,7 +49,7 @@ public class UserController {
             User user = userService.findById(id);
             if (user != null) {
                 // 不返回密码信息
-                user.setPasswordHash(null);
+                user.setPassword_hash(null);
                 return Result.success(user);
             } else {
                 return Result.error("用户不存在");

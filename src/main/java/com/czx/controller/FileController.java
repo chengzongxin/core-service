@@ -5,6 +5,7 @@ import com.czx.pojo.FileRecord;
 import com.czx.service.FileService;
 import com.czx.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
@@ -40,17 +42,18 @@ public class FileController {
     }
     
     @GetMapping("/list")
-    public Result listFiles(HttpServletRequest request) {
+    public List<FileRecord>  listFiles(HttpServletRequest request) {
         try {
             // 检查用户是否已认证
             if (!RequestUtils.isAuthenticated(request)) {
-                return Result.error("用户未认证");
+                return null;
             }
-            
-            List<FileRecord> files = fileService.getAllFiles();
-            return Result.success(files);
+
+            return fileService.getAllFiles();
         } catch (Exception e) {
-            return Result.error("获取文件列表失败: " + e.getMessage());
+//            return Result.error("获取文件列表失败: " + e.getMessage());
+            log.error(e.getMessage());
+            return null;
         }
     }
     
@@ -69,7 +72,7 @@ public class FileController {
             
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, 
-                            "attachment; filename=\"" + fileRecord.getOriginalName() + "\"")
+                            "attachment; filename=\"" + fileRecord.getOriginal_name() + "\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
                     

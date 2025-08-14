@@ -4,13 +4,13 @@
     
     <resultMap id="FileRecordResultMap" type="com.czx.pojo.FileRecord">
         <id column="id" property="id"/>
-        <result column="original_name" property="originalName"/>
-        <result column="stored_name" property="storedName"/>
-        <result column="file_path" property="filePath"/>
-        <result column="file_size" property="fileSize"/>
-        <result column="file_type" property="fileType"/>
-        <result column="uploaded_by" property="uploadedBy"/>
-        <result column="upload_time" property="uploadTime"/>
+        <result column="original_name" property="original_name"/>
+        <result column="stored_name" property="stored_name"/>
+        <result column="file_path" property="file_path"/>
+        <result column="file_size" property="file_size"/>
+        <result column="file_type" property="file_type"/>
+        <result column="uploaded_by" property="uploaded_by"/>
+        <result column="upload_time" property="upload_time"/>
     </resultMap>
     
     <select id="findAll" resultMap="FileRecordResultMap">
@@ -23,7 +23,7 @@
     
     <insert id="insert" parameterType="com.czx.pojo.FileRecord" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO file_records (original_name, stored_name, file_path, file_size, file_type, uploaded_by, upload_time)
-        VALUES (#{originalName}, #{storedName}, #{filePath}, #{fileSize}, #{fileType}, #{uploadedBy}, NOW())
+        VALUES (#{original_name}, #{stored_name}, #{file_path}, #{file_size}, #{file_type}, #{uploaded_by}, NOW())
     </insert>
     
     <delete id="deleteById">

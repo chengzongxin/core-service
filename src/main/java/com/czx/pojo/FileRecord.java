@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 @Data
 public class FileRecord {
     private Integer id;
-    private String originalName;
-    private String storedName;
-    private String filePath;
-    private Long fileSize;
-    private String fileType;
-    private String uploadedBy;
-    private LocalDateTime uploadTime;
+    private String original_name;
+    private String stored_name;
+    private String file_path;
+    private Long file_size;
+    private String file_type;
+    private String uploaded_by;
+    private LocalDateTime upload_time;
 }

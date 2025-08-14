@@ -39,7 +39,7 @@ public class TemuServiceImpl implements TemuService {
                 return Result.error("用户配置不存在");
             }
             
-            String agentsellerCookie = config.getAgentsellerCookie();
+            String agentsellerCookie = config.getAgentseller_cookie();
             String mallid = config.getMallid();
             String originUrl = "https://agentseller.temu.com";
             String apiUrl = "https://agentseller.temu.com/mms/tmod_punish/agent/merchant_appeal/entrance/list";
@@ -96,7 +96,7 @@ public class TemuServiceImpl implements TemuService {
                 return Result.error("用户配置不存在");
             }
             
-            String agentsellerCookie = config.getAgentsellerCookie();
+            String agentsellerCookie = config.getAgentseller_cookie();
             String mallid = config.getMallid();
             String originUrl = "https://agentseller.temu.com";
             String apiUrl = "https://agentseller.temu.com/mms/tmod_punish/agent/merchant_appeal/entrance/list";
@@ -153,7 +153,7 @@ public class TemuServiceImpl implements TemuService {
                 return Result.error("用户配置不存在");
             }
             
-            String agentsellerCookie = config.getAgentsellerCookie();
+            String agentsellerCookie = config.getAgentseller_cookie();
             String mallid = config.getMallid();
             String originUrl = "https://agentseller.temu.com";
             String url = "https://agentseller.temu.com/visage-agent-seller/product/skc/pageQuery";
@@ -241,11 +241,11 @@ public class TemuServiceImpl implements TemuService {
      */
     private Result batchOfflineProducts(UserConfig config, List<Integer> productIds, int maxThreads) {
         try {
-            String kuajingmaihuoCookie = config.getKuajingmaihuoCookie();
+            String kuajingmaihuoCookie = config.getKuajingmaihuo_cookie();
             String mallid = config.getMallid();
-            String parentMsgId = config.getParentMsgId();
-            String toolId = config.getToolId();
-            String parentMsgTimestamp = config.getParentMsgTimestamp();
+            String parentMsgId = config.getParent_msg_id();
+            String toolId = config.getTool_id();
+            String parentMsgTimestamp = config.getParent_msg_timestamp();
             String originUrl = "https://seller.kuajingmaihuo.com";
             
             // 检查缓存是否有效（24小时）

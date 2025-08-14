@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 @Data
 public class UserConfig {
     private Integer id;
-    private Integer userId;
-    private String kuajingmaihuoCookie;
-    private String agentsellerCookie;
+    private Integer user_id;
+    private String kuajingmaihuo_cookie;
+    private String agentseller_cookie;
     private String mallid;
-    private String parentMsgId;
-    private String parentMsgTimestamp;
-    private String toolId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String parent_msg_id;
+    private String parent_msg_timestamp;
+    private String tool_id;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 }

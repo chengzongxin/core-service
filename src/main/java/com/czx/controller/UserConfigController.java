@@ -27,7 +27,7 @@ public class UserConfigController {
                 return Result.error("用户未认证");
             }
             
-            userConfig.setUserId(userId);
+            userConfig.setUser_id(userId);
             boolean success = userConfigService.saveOrUpdateConfig(userConfig);
             if (success) {
                 return Result.success("配置已保存");

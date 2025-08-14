@@ -2,13 +2,14 @@ package com.czx.service.impl;
 
 import com.czx.mapper.FileRecordMapper;
 import com.czx.pojo.FileRecord;
+import com.czx.pojo.Result;
 import com.czx.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,23 +18,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
     
     @Autowired
     private FileRecordMapper fileRecordMapper;
     
-    @Value("${file.upload-dir:./uploads}")
-    private String uploadDir;
+    private final String uploadDir = "./uploads";
+    
+    public FileServiceImpl() {
+        // 确保上传目录存在
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
     
     @Override
-    @Transactional
-    public FileRecord uploadFile(MultipartFile file, String username) {
+    public FileRecord uploadFile(MultipartFile file, String uploadedBy) {
         try {
-            // 创建上传目录
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            if (file.isEmpty()) {
+                return null;
             }
             
             // 生成唯一文件名
@@ -45,18 +51,18 @@ public class FileServiceImpl implements FileService {
             String storedFilename = UUID.randomUUID().toString() + fileExtension;
             
             // 保存文件到磁盘
-            Path filePath = uploadPath.resolve(storedFilename);
+            Path filePath = Paths.get(uploadDir, storedFilename);
             Files.copy(file.getInputStream(), filePath);
             
             // 创建文件记录
             FileRecord fileRecord = new FileRecord();
-            fileRecord.setOriginalName(originalFilename);
-            fileRecord.setStoredName(storedFilename);
-            fileRecord.setFilePath(filePath.toString());
-            fileRecord.setFileSize(file.getSize());
-            fileRecord.setFileType(file.getContentType());
-            fileRecord.setUploadedBy(username);
-            fileRecord.setUploadTime(LocalDateTime.now());
+            fileRecord.setOriginal_name(originalFilename);
+            fileRecord.setStored_name(storedFilename);
+            fileRecord.setFile_path(filePath.toString());
+            fileRecord.setFile_size(file.getSize());
+            fileRecord.setFile_type(file.getContentType());
+            fileRecord.setUploaded_by(uploadedBy);
+            fileRecord.setUpload_time(LocalDateTime.now());
             
             // 保存到数据库
             fileRecordMapper.insert(fileRecord);
@@ -64,10 +70,13 @@ public class FileServiceImpl implements FileService {
             return fileRecord;
             
         } catch (IOException e) {
-            throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
+//            return "文件上传失败: " + e.getMessage();
+
+            return null;
         }
+
     }
-    
+
     @Override
     public List<FileRecord> getAllFiles() {
         return fileRecordMapper.findAll();
@@ -75,40 +84,44 @@ public class FileServiceImpl implements FileService {
     
     @Override
     public FileRecord getFileById(Integer id) {
-        return fileRecordMapper.findById(id);
+        try {
+            return fileRecordMapper.findById(id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
     
     @Override
-    @Transactional
     public boolean deleteFile(Integer id) {
-        FileRecord fileRecord = fileRecordMapper.findById(id);
-        if (fileRecord != null) {
+        try {
+            FileRecord file = fileRecordMapper.findById(id);
+            if (file == null) {
+                System.out.println("文件不存在");
+                return false;
+            }
+            
             // 删除物理文件
-            try {
-                Path filePath = Paths.get(fileRecord.getFilePath());
-                Files.deleteIfExists(filePath);
-            } catch (IOException e) {
-                // 记录日志但不影响数据库删除
-                System.err.println("删除物理文件失败: " + e.getMessage());
+            Path filePath = Paths.get(file.getFile_path());
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
             }
             
             // 删除数据库记录
-            return fileRecordMapper.deleteById(id) > 0;
+            fileRecordMapper.deleteById(id);
+            
+            return true;
+            
+        } catch (Exception e) {
+//            return Result.error("文件删除失败: " + e.getMessage());
+            System.out.println(e.getMessage());
+            return false;
         }
-        return false;
+
     }
-    
+
     @Override
     public byte[] downloadFile(Integer id) {
-        FileRecord fileRecord = fileRecordMapper.findById(id);
-        if (fileRecord != null) {
-            try {
-                Path filePath = Paths.get(fileRecord.getFilePath());
-                return Files.readAllBytes(filePath);
-            } catch (IOException e) {
-                throw new RuntimeException("文件下载失败: " + e.getMessage(), e);
-            }
-        }
-        throw new RuntimeException("文件不存在");
+        return new byte[0];
     }
 }

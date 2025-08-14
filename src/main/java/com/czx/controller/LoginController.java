@@ -18,7 +18,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    @PostMapping("/api/auth/login")
     public Result login(@RequestBody User user){
         log.info("用户登录: {}", user);
         User u = userService.login(user);

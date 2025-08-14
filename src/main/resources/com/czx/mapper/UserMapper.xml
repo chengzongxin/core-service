@@ -6,11 +6,11 @@
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="email" property="email"/>
-        <result column="password_hash" property="passwordHash"/>
-        <result column="is_active" property="isActive"/>
-        <result column="is_admin" property="isAdmin"/>
-        <result column="created_at" property="createdAt"/>
-        <result column="updated_at" property="updatedAt"/>
+        <result column="password" property="password"/>
+        <result column="is_active" property="is_active"/>
+        <result column="is_admin" property="is_admin"/>
+        <result column="created_at" property="created_at"/>
+        <result column="updated_at" property="updated_at"/>
     </resultMap>
     
     <select id="findByUsername" resultMap="UserResultMap">
@@ -22,17 +22,17 @@
     </select>
     
     <insert id="insert" parameterType="com.czx.pojo.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (username, email, password_hash, is_active, is_admin, created_at, updated_at)
-        VALUES (#{username}, #{email}, #{passwordHash}, #{isActive}, #{isAdmin}, NOW(), NOW())
+        INSERT INTO users (username, email, password, is_active, is_admin, created_at, updated_at)
+        VALUES (#{username}, #{email}, #{password}, #{is_active}, #{is_admin}, NOW(), NOW())
     </insert>
     
     <update id="update" parameterType="com.czx.pojo.User">
         UPDATE users 
         SET username = #{username},
             email = #{email},
-            password_hash = #{passwordHash},
-            is_active = #{isActive},
-            is_admin = #{isAdmin},
+            password = #{password},
+            is_active = #{is_active},
+            is_admin = #{is_admin},
             updated_at = NOW()
         WHERE id = #{id}
     </update>

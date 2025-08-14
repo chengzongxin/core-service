@@ -68,6 +68,6 @@ public class TemuController {
             return Result.error("用户未认证");
         }
         
-        return temuService.offlineProducts(request.getProductIds(), request.getMaxThreads());
+        return temuService.offlineProducts(request.getProductIds(), request.getMax_threads());
     }
 }

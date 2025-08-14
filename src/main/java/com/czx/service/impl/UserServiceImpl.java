@@ -19,12 +19,12 @@ public class UserServiceImpl implements UserService {
         
         if (foundUser != null) {
             // 检查用户是否激活
-            if (foundUser.getIsActive() != null && foundUser.getIsActive() == 0) {
+            if (foundUser.getIs_active() != null && foundUser.getIs_active() == 0) {
                 return null; // 用户未激活
             }
             
             // 检查密码是否匹配（这里假设密码是明文存储，实际应该使用加密）
-            if (foundUser.getPasswordHash().equals(user.getPasswordHash())) {
+            if (foundUser.getPassword().equals(user.getPassword())) {
                 return foundUser;
             }
         }
